@@ -1,8 +1,11 @@
+# сначала меняем порт ssh на нестандартный и дабавляем его в selinux
 [root@oraclelinuxlab ~]# vim /etc/ssh/sshd_config
 [root@oraclelinuxlab ~]# grep Port /etc/ssh/sshd_config
 Port 2224
 [root@oraclelinuxlab ~]# semanage port -a -t ssh_port_t -p tcp 2224
 [root@oraclelinuxlab ~]# systemctl reload sshd.service
+
+#меняем порт для сервиса ssh в firewallld
 [root@oraclelinuxlab ~]# firewall-cmd --list-all | grep services
   services: cockpit dhcpv6-client http ssh
 [root@oraclelinuxlab ~]# cp /lib/firewalld/services/ssh.xml /etc/fire
@@ -12,6 +15,8 @@ firefox/   firewalld/
 [root@oraclelinuxlab ~]# grep port /etc/firewalld/services/ssh.xml
   <port protocol="tcp" port="2224"/>
 [root@oraclelinuxlab ~]# systemctl restart firewalld.service
+
+#проверяем, что порт поменялся
 [root@oraclelinuxlab ~]# firewall-cmd --info-service=ssh
 ssh
   ports: 2224/tcp
