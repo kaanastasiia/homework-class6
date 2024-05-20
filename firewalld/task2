@@ -1,3 +1,4 @@
+создаем сервис для firewalld и добавляем его в открытые порты
 [root@oraclelinuxlab ~]# cd /etc/firewalld/services/
 [root@oraclelinuxlab services]# cp ssh.xml random.xml
 [root@oraclelinuxlab services]# vim random.xml
@@ -31,10 +32,13 @@ public (active)
   source-ports:
   icmp-blocks:
   rich rules:
+
+#отрываем данный порт и подключаемся с соседней машины
 [root@oraclelinuxlab services]# nc -l 32124
 root@test:~$ nc -v 192.168.0.103 32124
 Connection to 192.168.0.103 32124 port [tcp/*] succeeded!
 
+#создаем правило, чтобы подключения с соседней машины реджектились
 [root@oraclelinuxlab services]# firewall-cmd --permanent --add-rich-rule="rule family='ipv4' source address='192.168.0.104' reject"
 success
 [root@oraclelinuxlab services]# systemctl restart firewalld.service
@@ -55,6 +59,8 @@ public (active)
   rich rules:
         rule family="ipv4" source address="192.168.0.104" reject
 [root@oraclelinuxlab services]# nastya@Asus-VivoBook:~$ nc -v 192.168.0.103 32124
+
+#пытаемся подключиться и видим, что подключение было отброшено
 [root@oraclelinuxlab services]# nc -lv 32124
 root@test:~$ nc -v 192.168.0.103 32124
 nc: connect to 192.168.0.103 port 32124 (tcp) failed: Connection refused
