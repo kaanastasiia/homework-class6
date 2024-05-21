@@ -1,0 +1,22 @@
+[root@oraclelinuxlab ~]# systemctl stop firewalld.service
+[root@oraclelinuxlab ~]# iptables -A INPUT -p tcp -s 192.168.0.104 --dport 22 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT
+[root@oraclelinuxlab ~]# iptables --policy INPUT DROP
+[root@oraclelinuxlab ~]# iptables -L
+Chain INPUT (policy DROP)
+target     prot opt source               destination
+ACCEPT     tcp  --  192.168.0.104        anywhere             tcp dpt:ssh ctstate NEW,ESTABLISHED
+
+Chain FORWARD (policy ACCEPT)
+target     prot opt source               destination
+
+Chain OUTPUT (policy ACCEPT)
+target     prot opt source               destination
+root@test:~$ ssh 192.168.0.103
+root@192.168.0.103's password:
+Activate the web console with: systemctl enable --now cockpit.socket
+
+Last login: Tue May 21 22:10:51 2024 from 192.168.0.104
+[nastya@oraclelinuxlab ~]$
+
+root@ubuntu:~$ ssh 192.168.0.103
+ssh: connect to host 192.168.0.104 port 22: Connection timed out
